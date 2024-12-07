@@ -48,6 +48,13 @@ const getSingleProduct = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
     const result = await ProductServices.getSingleProductFromDB(productId);
+    if (!result) {
+      res.status(404).json({
+        success: false,
+        message: 'Product not found',
+        data: {},
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -67,16 +74,20 @@ const updateProduct = async (req: Request, res: Response) => {
     const productData = req.body;
     const { productId } = req.params;
 
-    // // data validation using zod
-    // const zodParsedData = productValidationSchema.parse(productData);
-
-    // const result = await ProductServices.createProductIntoDB(zodParsedData);
     const result = await ProductServices.updateProduct(productId, productData);
+
+    if (!result) {
+      res.status(404).json({
+        success: false,
+        message: 'Product not found',
+        data: {},
+      });
+    }
 
     res.status(200).json({
       success: true,
       message: 'Product updated successfully',
-      daa: result,
+      data: result,
     });
   } catch (err: any) {
     res.status(500).json({
@@ -90,7 +101,15 @@ const updateProduct = async (req: Request, res: Response) => {
 const deleteProduct = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
-    await ProductServices.deleteProductFromDB(productId);
+    const result = await ProductServices.deleteProductFromDB(productId);
+
+    if (!result) {
+      res.status(404).json({
+        success: false,
+        message: 'Product not found',
+        data: {},
+      });
+    }
 
     res.status(200).json({
       success: true,
